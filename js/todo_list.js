@@ -40,7 +40,54 @@ var todoList = [
 
 // app Vue instance
 var app = new Vue({
-    // TODO: add code here
+    // app initial state
+    data: {
+        todos: [],
+        newTodo: '',
+        visibility: 'all'
+    },
+
+    computed: {
+        // return todos that match the currently selected filter
+        filteredTodos () {
+            return filters[this.visibility](this.todos);
+        },
+
+        // return count of the remaining active todo items
+        remaining () {
+            return filters.active(this.todos).length;
+        }
+    },
+
+    methods: {
+        // change current filter to the given value
+        setFilter (filter) {
+            this.visibility = filter;
+        },
+
+        // add newly entered todo item if it exists and clear it to prepare for the next one
+        addTodo () {
+            this.newTodo = this.newTodo.trim();
+            if (this.newTodo) {
+                this.todos.push({
+                    title: this.newTodo,
+                    completed: false
+                })
+                // text input displays this value, so clear it to indicate ready to type a new one
+                this.newTodo = '';
+            }
+        },
+
+        // remove given todo from the list
+        removeTodo (todo) {
+            this.todos.splice(this.todos.indexOf(todo), 1)
+        },
+
+        // remove all completed todos from the list
+        removeCompleted () {
+            this.todos = filters.active(this.todos)
+        }
+    }
 })
 
 // mount
